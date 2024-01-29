@@ -1,0 +1,46 @@
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+include = ["pyproject.toml", "src/**/*.py"]
+exclude = ["src/**/migrations"]
+
+[tool.ruff.lint]
+preview = true
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # flake8-bandit
+    "S",
+    # flake8-logging
+    "LOG",
+    # flake8-comprehensions
+    "C4",
+    # flake8-print
+    "T20",
+    # flake8-pytest-style
+    "PT",
+    # isort
+    "I",
+    # Pylint
+    "PL",
+    # Ruff-specific rules
+    "RUF",
+]
+unfixable = ["B"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["E402"]
+"src/manage.py" = ["PLC0415"]
+
+[tool.ruff.format]
+line-ending = "lf"
+docstring-code-format = true
+docstring-code-line-length = 79
