@@ -32,6 +32,7 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     "django_extensions",
     "django_htmx",
+    "template_partials",
 ]
 
 LOCAL_APPS = ["apps.gol"]
