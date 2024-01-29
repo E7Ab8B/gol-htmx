@@ -1,4 +1,0 @@
-django==5.0.1  # https://github.com/django/django
-pre-commit==3.6.0  # https://github.com/pre-commit/pre-commit
-ruff == 0.1.14  # https://github.com/astral-sh/ruff
-django-environ==0.11.2  # https://github.com/joke2k/django-environ
