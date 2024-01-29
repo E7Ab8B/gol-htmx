@@ -40,6 +40,7 @@ django==5.0.1 \
     #   -r requirements\base.in
     #   django-extensions
     #   django-htmx
+    #   django-template-partials
 django-environ==0.11.2 \
     --hash=sha256:0ff95ab4344bfeff693836aa978e6840abef2e2f1145adff7735892711590c05 \
     --hash=sha256:f32a87aa0899894c27d4e1776fa6b477e8164ed7f6b3e410a62a6d72caaf64be
@@ -51,6 +52,10 @@ django-extensions==3.2.3 \
 django-htmx==1.17.2 \
     --hash=sha256:4089f2ed38727e9846c2f4cd1daddf6b010c7be8d834cfbcffc8c5ecf445c04e \
     --hash=sha256:f4971432d2ca45dbb31d9b58add1c50ae54354afe4bf59cafd591b1711b502c0
+    # via -r requirements\base.in
+django-template-partials==23.4 \
+    --hash=sha256:d83d9c2d2836be769919e9aaf394d5feb1ac86e1187083030398308070122fca \
+    --hash=sha256:f762b0b7b2222462df0845f0556792640b769eb832eae218a0e7dadd4e5606cc
     # via -r requirements\base.in
 execnet==2.0.2 \
     --hash=sha256:88256416ae766bc9e8895c76a87928c0012183da3cc4fc18016e6f050e025f41 \
