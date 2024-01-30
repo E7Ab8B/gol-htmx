@@ -18,8 +18,10 @@
     <script src="https://unpkg.com/htmx.org@1.9.10/dist/ext/sse.js" defer></script>
   </head>
 
-  <body class="h-screen flex justify-center items-center">
-    {% partial grid %}
+  <body>
+    <div class="h-screen mx-auto flex justify-center items-center" hx-ext="sse" sse-connect="{% url 'update' %}" sse-swap="message" hx-target="#grid-container" hx-swap="outerHTML">
+      {% partial grid %}
+    </div>
   </body>
 </html>
 
