@@ -44,6 +44,7 @@ ignore = ["S101"]
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["E402"]
 "src/manage.py" = ["PLC0415"]
+"src/**/tests/**/*" = ["PLR2004"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["apps"]
