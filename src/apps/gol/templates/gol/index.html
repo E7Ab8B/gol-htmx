@@ -1,0 +1,21 @@
+{% load django_htmx %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+
+    <title>Conway's Game of Life</title>
+
+    {% if DEBUG %}
+      <script src="https://unpkg.com/htmx.org@1.9.10/dist/htmx.js" defer></script>
+      <script src="https://unpkg.com/htmx.org@1.9.10/dist/ext/debug.js" defer></script>
+    {% else %}
+      <script src="https://unpkg.com/htmx.org@1.9.10/dist/htmx.min.js" defer></script>
+    {% endif %}
+    <script src="https://unpkg.com/htmx.org@1.9.10/dist/ext/sse.js" defer></script>
+  </head>
+
+  <body>
+  </body>
+</html>
