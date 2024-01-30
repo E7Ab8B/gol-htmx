@@ -4,10 +4,7 @@ from .base import env
 # GENERAL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
-SECRET_KEY = env(
-    "DJANGO_SECRET_KEY",
-    default="&!+p9w2iuugw$ck6=v)5h%qog6e3=l=eoz*mai6_4)183d@-=4",
-)
+SECRET_KEY = env("DJANGO_SECRET_KEY", default="&!+p9w2iuugw$ck6=v)5h%qog6e3=l=eoz*mai6_4)183d@-=4")  # pyright: ignore
 
 # DEBUGGING FOR TEMPLATES
 # ------------------------------------------------------------------------------
