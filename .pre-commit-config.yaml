@@ -16,6 +16,12 @@ repos:
       - id: ruff
       - id: ruff-format
 
+  - repo: https://github.com/RobertCraigie/pyright-python
+    rev: v1.1.349
+    hooks:
+      - id: pyright
+        entry: python -m pyright
+
   - repo: https://github.com/jazzband/pip-tools
     rev: 7.3.0
     hooks:
