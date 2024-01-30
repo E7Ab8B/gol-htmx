@@ -46,6 +46,17 @@ unfixable = ["B"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["apps"]
+section-order = [
+    "future",
+    "standard-library",
+    "third-party",
+    "django",
+    "first-party",
+    "local-folder",
+]
+
+[tool.ruff.lint.isort.sections]
+"django" = ["django"]
 
 [tool.ruff.format]
 line-ending = "lf"
