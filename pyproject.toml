@@ -44,6 +44,9 @@ unfixable = ["B"]
 "__init__.py" = ["E402"]
 "src/manage.py" = ["PLC0415"]
 
+[tool.ruff.lint.isort]
+known-first-party = ["apps"]
+
 [tool.ruff.format]
 line-ending = "lf"
 docstring-code-format = true
