@@ -48,3 +48,10 @@ unfixable = ["B"]
 line-ending = "lf"
 docstring-code-format = true
 docstring-code-line-length = 79
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
+pythonVersion = "3.12"
+exclude = ["src/**/migrations"]
+include = ["src"]
