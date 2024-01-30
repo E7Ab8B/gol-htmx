@@ -16,6 +16,12 @@ repos:
       - id: ruff
       - id: ruff-format
 
+  - repo: https://github.com/rtts/djhtml
+    rev: 3.0.6
+    hooks:
+      - id: djhtml
+        entry: djhtml -t 2
+
   - repo: https://github.com/RobertCraigie/pyright-python
     rev: v1.1.349
     hooks:
