@@ -96,6 +96,8 @@ django==5.0.1 \
     #   -r requirements\base.in
     #   django-extensions
     #   django-htmx
+    #   django-stubs
+    #   django-stubs-ext
     #   django-template-partials
 django-environ==0.11.2 \
     --hash=sha256:0ff95ab4344bfeff693836aa978e6840abef2e2f1145adff7735892711590c05 \
@@ -109,6 +111,14 @@ django-htmx==1.17.2 \
     --hash=sha256:4089f2ed38727e9846c2f4cd1daddf6b010c7be8d834cfbcffc8c5ecf445c04e \
     --hash=sha256:f4971432d2ca45dbb31d9b58add1c50ae54354afe4bf59cafd591b1711b502c0
     # via -r requirements\base.in
+django-stubs==4.2.7 \
+    --hash=sha256:4cf4de258fa71adc6f2799e983091b9d46cfc67c6eebc68fe111218c9a62b3b8 \
+    --hash=sha256:8ccd2ff4ee5adf22b9e3b7b1a516d2e1c2191e9d94e672c35cc2bc3dd61e0f6b
+    # via -r requirements/local.in
+django-stubs-ext==4.2.7 \
+    --hash=sha256:45a5d102417a412e3606e3c358adb4744988a92b7b58ccf3fd64bddd5d04d14c \
+    --hash=sha256:519342ac0849cda1559746c9a563f03ff99f636b0ebe7c14b75e816a00dfddc3
+    # via django-stubs
 django-template-partials==23.4 \
     --hash=sha256:d83d9c2d2836be769919e9aaf394d5feb1ac86e1187083030398308070122fca \
     --hash=sha256:f762b0b7b2222462df0845f0556792640b769eb832eae218a0e7dadd4e5606cc
@@ -327,6 +337,20 @@ termcolor==2.4.0 \
     --hash=sha256:9297c0df9c99445c2412e832e882a7884038a25617c60cea2ad69488d4040d63 \
     --hash=sha256:aab9e56047c8ac41ed798fa36d892a37aca6b3e9159f3e0c24bc64a9b3ac7b7a
     # via pytest-sugar
+types-pytz==2023.4.0.20240130 \
+    --hash=sha256:33676a90bf04b19f92c33eec8581136bea2f35ddd12759e579a624a006fd387a \
+    --hash=sha256:6ce76a9f8fd22bd39b01a59c35bfa2db39b60d11a2f77145e97b730de7e64fe0
+    # via django-stubs
+types-pyyaml==6.0.12.12 \
+    --hash=sha256:334373d392fde0fdf95af5c3f1661885fa10c52167b14593eb856289e1855062 \
+    --hash=sha256:c05bc6c158facb0676674b7f11fe3960db4f389718e19e62bd2b84d6205cfd24
+    # via django-stubs
+typing-extensions==4.9.0 \
+    --hash=sha256:23478f88c37f27d76ac8aee6c905017a143b0b1b886c3c9f66bc2fd94f9f5783 \
+    --hash=sha256:af72aea155e91adfc61c3ae9e0e342dbc0cba726d6cba4b6c72c1f34e47291cd
+    # via
+    #   django-stubs
+    #   django-stubs-ext
 tzdata==2023.4 \
     --hash=sha256:aa3ace4329eeacda5b7beb7ea08ece826c28d761cda36e747cfbf97996d39bf3 \
     --hash=sha256:dd54c94f294765522c77399649b4fefd95522479a664a0cec87f41bebc6148c9
