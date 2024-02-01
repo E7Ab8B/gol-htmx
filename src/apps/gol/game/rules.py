@@ -35,3 +35,13 @@ def underpopulation(cell: Cell, alive_neighbors: int) -> Literal[False] | None:
     if cell.is_alive and alive_neighbors < 2:
         return False
     return None
+
+
+def survival(cell: Cell, alive_neighbors: int) -> Literal[True] | None:
+    """Apply survival rule.
+
+    If the `cell` is alive and has 2 or 3 alive neighbors, it survives.
+    """
+    if cell.is_alive and alive_neighbors in range(2, 4):
+        return True
+    return None
