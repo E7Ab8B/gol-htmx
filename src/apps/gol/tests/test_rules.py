@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Literal
 import pytest
 
 from apps.gol.game.cell import Cell
-from apps.gol.game.rules import overpopulation, reproduction, survival, underpopulation
+from apps.gol.game.rules import game_rules, overpopulation, reproduction, survival, underpopulation
 
 if TYPE_CHECKING:
     type AliveNeighbors = int
@@ -128,3 +128,10 @@ class TestReproductionRule:
         state = reproduction(Cell(), alive_neighbors)
 
         assert state is expected
+
+
+def test_game_rules() -> None:
+    rules = [underpopulation, survival, overpopulation, reproduction]
+
+    assert all(rule in game_rules for rule in rules)
+    assert len(game_rules) == 4
