@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Literal
 
 if TYPE_CHECKING:
+    from ._types import Rule
     from .cell import Cell
 
 
@@ -55,3 +56,16 @@ def overpopulation(cell: Cell, alive_neighbors: int) -> Literal[False] | None:
     if cell.is_alive and alive_neighbors > 3:
         return False
     return None
+
+
+def reproduction(cell: Cell, alive_neighbors: int) -> Literal[True] | None:
+    """Apply reproduction rule.
+
+    If the `cell` is dead and has exactly 3 alive neighbors, it becomes alive.
+    """
+    if not cell.is_alive and alive_neighbors == 3:
+        return True
+    return None
+
+
+game_rules: tuple[Rule, ...] = (underpopulation, survival, overpopulation, reproduction)
