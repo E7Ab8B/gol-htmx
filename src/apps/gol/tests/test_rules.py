@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Literal
 import pytest
 
 from apps.gol.game.cell import Cell
-from apps.gol.game.rules import survival, underpopulation
+from apps.gol.game.rules import overpopulation, survival, underpopulation
 
 if TYPE_CHECKING:
     type AliveNeighbors = int
@@ -68,5 +68,34 @@ class TestSurvivalRule:
     @pytest.mark.parametrize("alive_neighbors", ALIVE_NEIGHBORS_RANGE)
     def test_dead_cell(alive_neighbors: int) -> None:
         state = survival(Cell(), alive_neighbors)
+
+        assert state is None
+
+
+class TestOverpopulationRule:
+    @staticmethod
+    @pytest.mark.parametrize(
+        ("alive_neighbors", "expected"),
+        [
+            (0, None),
+            (1, None),
+            (2, None),
+            (3, None),
+            (4, False),
+            (5, False),
+            (6, False),
+            (7, False),
+            (8, False),
+        ],
+    )
+    def test_alive_cell(alive_neighbors: int, expected: Literal[False] | None) -> None:
+        state = overpopulation(Cell(is_alive=True), alive_neighbors)
+
+        assert state is expected
+
+    @staticmethod
+    @pytest.mark.parametrize("alive_neighbors", ALIVE_NEIGHBORS_RANGE)
+    def test_dead_cell(alive_neighbors: int) -> None:
+        state = overpopulation(Cell(), alive_neighbors)
 
         assert state is None
