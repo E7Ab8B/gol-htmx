@@ -45,3 +45,13 @@ def survival(cell: Cell, alive_neighbors: int) -> Literal[True] | None:
     if cell.is_alive and alive_neighbors in range(2, 4):
         return True
     return None
+
+
+def overpopulation(cell: Cell, alive_neighbors: int) -> Literal[False] | None:
+    """Apply overpopulation rule.
+
+    If the `cell` is alive and has more than 3 alive neighbors, it dies.
+    """
+    if cell.is_alive and alive_neighbors > 3:
+        return False
+    return None
