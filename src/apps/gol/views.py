@@ -15,7 +15,9 @@ if TYPE_CHECKING:
 
 
 class GameView(TemplateView):
-    template_name = "gol/game.html"
+    """View for rendering the game template with an initial grid."""
+
+    template_name = "game.html"
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -27,11 +29,14 @@ game_view = GameView.as_view()
 
 
 class UpdateView(View):
+    """View for streaming real-time updates of the game grid."""
+
     async def get(self, request: HttpRequest) -> StreamingHttpResponse:
         return StreamingHttpResponse(self.stream(request), content_type="text/event-stream")
 
     @classmethod
     def stream(cls, request: HttpRequest) -> Iterable:
+        """Generate a continuous stream of game grid updates."""
         while True:
             grid = [[random.choice([True, False]) for _ in range(20)] for _ in range(20)]  # noqa: S311
             rendered_grid = render_to_string("gol/game.html#grid", {"grid": grid}, request)
