@@ -25,13 +25,10 @@
   </body>
 </html>
 
-
 {% partialdef grid %}
-  <div id="grid-container" class="grid grid-cols-[repeat({{ grid|length }},1fr)] border">
-    {% for row in grid %}
-      {% for cell in row %}
-        <div class="border h-[20px] w-[20px] {% if cell %}bg-black{% else %}bg-white{% endif %}"></div>
-      {% endfor %}
+  <div id="grid-container" class="grid grid-cols-[repeat({{ grid.rows }},1fr)] border">
+    {% for row, col, cell in grid  %}
+      <div class="border h-[20px] w-[20px] {% if cell %}bg-black{% else %}bg-white{% endif %}"></div>
     {% endfor %}
   </div>
 {% endpartialdef %}
