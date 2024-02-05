@@ -3,10 +3,19 @@
 import os
 import sys
 
+from django.conf import settings
+
 
 def main():
     """Run administrative tasks."""
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "gol_htmx.settings.local")
+
+    if settings.DEBUG and (os.environ.get("RUN_MAIN") or os.environ.get("WERKZEUG_RUN_MAIN")):
+        import debugpy  # pylint: disable=C0415
+
+        debugpy.listen(("0.0.0.0", 5678))  # noqa: S104
+        print("Debugpy attached!")  # noqa: T201
+
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
