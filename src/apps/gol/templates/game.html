@@ -18,17 +18,39 @@
     <script src="https://unpkg.com/htmx.org@1.9.10/dist/ext/sse.js" defer></script>
   </head>
 
-  <body>
-    <div class="h-screen mx-auto flex justify-center items-center" hx-ext="sse" sse-connect="{% url 'update' %}" sse-swap="message" hx-target="#grid-container" hx-swap="outerHTML">
+  <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+    <div
+      class="h-screen mx-auto flex justify-center items-center"
+      {% comment %}
+      hx-ext="sse"
+      sse-connect="{% url 'update' %}"
+      {% endcomment %}
+      sse-swap="message"
+      hx-target="#grid-container"
+      hx-swap="outerHTML"
+    >
       {% partial grid %}
     </div>
   </body>
 </html>
 
+
 {% partialdef grid %}
   <div id="grid-container" class="grid grid-cols-[repeat({{ grid.rows }},1fr)] border">
     {% for row, col, cell in grid  %}
-      <div class="border h-[20px] w-[20px] {% if cell %}bg-black{% else %}bg-white{% endif %}"></div>
+      {% partial cell %}
     {% endfor %}
   </div>
+{% endpartialdef %}
+
+{% partialdef cell %}
+  <div
+    class="border h-[20px] w-[20px] {% if cell %}bg-black{% endif %}"
+    {% if updatable_cells %}
+      hx-post="{% url "cell" %}"
+      hx-swap="outerHTML"
+      hx-target="this"
+      hx-vals='{"row": {{ row }}, "col": {{ col }}{% if cell %}, "is_alive": "true"{% endif %}}'
+    {% endif %}
+  ></div>
 {% endpartialdef %}
