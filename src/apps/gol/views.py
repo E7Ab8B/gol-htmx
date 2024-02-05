@@ -9,20 +9,11 @@ from django.template.loader import render_to_string
 from django.views import View
 from django.views.generic import TemplateView
 
-from .game import Game, Grid
+from .forms import CellUpdateForm
+from .game import Cell, Game, Grid
 
 if TYPE_CHECKING:
-    from django.http import HttpRequest
-
-
-def init_grid() -> Grid:
-    grid = Grid(rows=50, columns=50)
-    grid.set_cell(0, 0, True)
-    grid.set_cell(1, 3, True)
-    grid.set_cell(2, 1, True)
-    grid.set_cell(2, 2, True)
-    grid.set_cell(2, 3, True)
-    return grid
+    from django.http import HttpRequest, HttpResponse
 
 
 class GameView(TemplateView):
@@ -32,7 +23,8 @@ class GameView(TemplateView):
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context["grid"] = init_grid()
+        context["grid"] = Grid(rows=50, columns=50)
+        context["updatable_cells"] = True
         return context
 
 
@@ -42,13 +34,13 @@ game_view = GameView.as_view()
 class UpdateView(View):
     """View for streaming real-time updates of the game grid."""
 
-    async def get(self, request: HttpRequest) -> StreamingHttpResponse:
+    def get(self, request: HttpRequest) -> StreamingHttpResponse:
         return StreamingHttpResponse(self.stream(request), content_type="text/event-stream")
 
     @classmethod
     def stream(cls, request: HttpRequest) -> Iterable:
         """Generate a continuous stream of game grid updates."""
-        game = Game(init_grid())
+        game = Game(Grid(rows=50, columns=50))
         while True:
             rendered_grid = render_to_string("game.html#grid", {"grid": game.grid}, request)
             yield f"data: {rendered_grid.replace('\n', '')}"
@@ -58,3 +50,25 @@ class UpdateView(View):
 
 
 update_view = UpdateView.as_view()
+
+
+class CellUpdateView(TemplateView):
+    template_name = "game.html#cell"
+
+    def post(self, request: HttpRequest) -> HttpResponse:
+        form = CellUpdateForm(request.POST)
+        # TODO: Inform about error
+        form.full_clean()
+        cell = Cell(is_alive=not form.cleaned_data["is_alive"])
+
+        return self.render_to_response(
+            {
+                "col": form.cleaned_data["row"],
+                "row": form.cleaned_data["col"],
+                "cell": cell,
+                "updatable_cells": True,
+            }
+        )
+
+
+cell_update_view = CellUpdateView.as_view()
