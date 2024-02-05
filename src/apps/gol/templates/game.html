@@ -47,7 +47,7 @@
   <div
     class="border h-[20px] w-[20px] {% if cell %}bg-black{% endif %}"
     {% if updatable_cells %}
-      hx-post="{% url "cell" %}"
+      hx-post="{% url "cell-update" %}"
       hx-swap="outerHTML"
       hx-target="this"
       hx-vals='{"row": {{ row }}, "col": {{ col }}{% if cell %}, "is_alive": "true"{% endif %}}'
