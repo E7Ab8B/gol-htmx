@@ -53,6 +53,8 @@ update_view = UpdateView.as_view()
 
 
 class CellUpdateView(TemplateView):
+    """View for handling updates to individual cells in the game grid."""
+
     template_name = "game.html#cell"
 
     def post(self, request: HttpRequest) -> HttpResponse:
