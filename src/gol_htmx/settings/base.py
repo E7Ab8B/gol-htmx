@@ -97,3 +97,10 @@ TEMPLATES = [
         },
     },
 ]
+
+# SESSIONS
+# ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/dev/ref/settings/#std-setting-SESSION_ENGINE
+SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
+# https://docs.djangoproject.com/en/dev/ref/settings/#session-expire-at-browser-close
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
