@@ -45,7 +45,7 @@
 
 {% partialdef cell %}
   <div
-    class="border h-[20px] w-[20px] {% if cell %}bg-black{% endif %}"
+    class="border h-[15px] w-[15px] {% if cell %}bg-black{% endif %}"
     {% if updatable_cells %}
       hx-post="{% url "cell-update" %}"
       hx-swap="outerHTML"
