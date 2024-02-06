@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 from .cell import Cell
 
 if TYPE_CHECKING:
-    from ._types import CellGrid
+    from ._types import AliveCells, CellGrid
 
 
 @dataclass(slots=True, kw_only=True)
@@ -59,6 +59,16 @@ class Grid:
     def cols(self) -> int:
         """Returns the number of columns in the grid (alias for :attr:`columns`)."""
         return self.columns
+
+    @classmethod
+    def generate_grid(cls, *, rows: int, columns: int, alive_cells: AliveCells) -> Grid:
+        """Generate a grid with specified dimensions and initial alive cells."""
+        cell_grid = []
+        for row in range(rows):
+            alive_columns = alive_cells.get(str(row))
+            cell_grid.append([Cell(col in alive_columns) if alive_columns else Cell() for col in range(columns)])
+
+        return Grid(rows=rows, columns=columns, init_cell_grid=cell_grid)
 
     def _empty_cell_grid(self) -> CellGrid:
         """Returns an empty cell grid with all cells in the dead state."""
