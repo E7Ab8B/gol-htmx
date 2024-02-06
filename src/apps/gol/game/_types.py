@@ -9,3 +9,5 @@ type Row = list[Cell]
 type CellGrid = list[Row]
 
 type Rule = Callable[[Cell, int], bool | None]
+
+type AliveCells = dict[str, list[int]]  # {row: [col, ...]}
