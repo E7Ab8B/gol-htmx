@@ -18,34 +18,39 @@
   </head>
 
   <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-    <div
-      class="h-screen mx-auto flex justify-center items-center"
-      hx-ext="sse"
-      sse-swap="update"
-      sse-connect="{% url "update" %}"
-    >
+    {% partial fresh_control_panel %}
+
+    <div class="h-screen mx-auto flex justify-center items-center">
       {% partial grid %}
     </div>
-
-    {% comment %}
-    This script block listens for htmx SSE errors and handles them by removing the 'sse-connect' attribute from the
-    element that triggered the error.
-    This prevents htmx from automatically retrying the SSE connection after an error occurs or when the connection is lost.
-    In our case, the connection needs to be closed after the game ends, so we explicitly close the connection here.
-    This approach has the downside that it will not trigger a retry if an unexpected error occurs.
-    https://htmx.org/extensions/server-sent-events/#automatic-reconnection
-    {% endcomment %}
-    <script>
-      document.addEventListener("htmx:sseError", function(evt) {
-        evt.detail.elt.removeAttribute("sse-connect");
-        evt.detail.source.close();
-      });
-    </script>
   </body>
 </html>
 
+{% partialdef playing_control_panel %}
+  <div id="control-panel">
+    <button disabled>Start</button>
+    <button>Stop</button>
+
+    <div id="sse-listener" hx-ext="sse" sse-connect="{% url "update" %}">
+      <div hx-ext="sse" sse-swap="update" hx-target="#grid-container" hx-swap="outerHTML"></div>
+      <div hx-ext="sse" sse-swap="end" hx-target="#control-panel" hx-swap="outerHTML"></div>
+    </div>
+  </div>
+{% endpartialdef %}
+
+{% partialdef fresh_control_panel %}
+  <div id="control-panel">
+    <button hx-get="{% url 'start-game' %}" hx-target="#control-panel" hx-trigger="click once">
+      Start
+    </button>
+    <button>Restart/Clear?</button>
+
+    <div id="sse-listener"></div>
+  </div>
+{% endpartialdef %}
+
 {% partialdef grid %}
-  <div class="grid grid-cols-[repeat({{ grid.rows }},1fr)] border">
+  <div id="grid-container" class="grid grid-cols-[repeat({{ grid.rows }},1fr)] border">
     {% for row, col, cell in grid  %}
       {% partial cell %}
     {% endfor %}
