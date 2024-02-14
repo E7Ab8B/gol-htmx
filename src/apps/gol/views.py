@@ -39,6 +39,13 @@ class GameView(TemplateView):
 game_view = GameView.as_view()
 
 
+class StartGameView(TemplateView):
+    template_name = "game.html#playing_control_panel"
+
+
+start_game_view = StartGameView.as_view()
+
+
 class UpdateView(View):
     """View for streaming real-time updates of the game grid."""
 
