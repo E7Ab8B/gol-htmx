@@ -56,12 +56,17 @@ class UpdateView(View):
     def stream(request: HttpRequest) -> Iterable:
         """Generate a continuous stream of game grid updates."""
         game = Game(generate_grid(request))
-        while True:
+        while not game.has_ended:
+            time.sleep(0.5)
             rendered_grid = render_to_string("game.html#grid", {"grid": game.grid}, request)
+            yield "event: update\n"
             yield f"data: {rendered_grid.replace('\n', '')}"
             yield "\n\n"
             game.update()
-            time.sleep(0.5)
+        rendered_grid = render_to_string("game.html#fresh_control_panel", {"grid": game.grid}, request)
+        yield "event: end\n"
+        yield f"data: {rendered_grid.replace('\n', '')}"
+        yield "\n\n"
 
 
 update_view = UpdateView.as_view()
