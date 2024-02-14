@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import contextlib
 import time
 from collections.abc import Iterable
 from typing import TYPE_CHECKING
@@ -10,13 +9,10 @@ from django.template.loader import render_to_string
 from django.views import View
 from django.views.generic import TemplateView
 
-from .forms import CellUpdateForm
-from .game import Cell, Game, Grid
+from .game import Game, Grid
 
 if TYPE_CHECKING:
     from django.http import HttpRequest, HttpResponse
-
-    from .game._types import AliveCells
 
 
 def generate_grid(request: HttpRequest) -> Grid:
@@ -70,38 +66,3 @@ class UpdateView(View):
 
 
 update_view = UpdateView.as_view()
-
-
-class CellUpdateView(TemplateView):
-    """View for handling updates to individual cells in the game grid."""
-
-    template_name = "game.html#cell"
-
-    def post(self, request: HttpRequest) -> HttpResponse:
-        form = CellUpdateForm(request.POST)
-        # TODO: Inform about error
-        form.full_clean()
-
-        cell = Cell(is_alive=not form.cleaned_data["is_alive"])
-        row = form.cleaned_data["row"]
-        col = form.cleaned_data["col"]
-
-        alive_cells: AliveCells = request.session.setdefault("alive_cells", {})
-        alive_columns = alive_cells.setdefault(str(row), [])
-
-        if cell.is_alive:
-            alive_columns.append(col)
-        else:
-            # It shouldn't be technically possible to have a missing column, but left it as a safeguard
-            with contextlib.suppress(ValueError):
-                alive_columns.remove(col)
-
-        # Mark the session as modified to ensure changes to alive_cells, especially nested structures like alive_columns
-        # are saved. Django's default mechanism might not catch modifications within nested structures.
-        # https://docs.djangoproject.com/en/dev/topics/http/sessions/#when-sessions-are-saved
-        request.session.modified = True
-
-        return self.render_to_response({"col": row, "row": col, "cell": cell, "updatable_cells": True})
-
-
-cell_update_view = CellUpdateView.as_view()
