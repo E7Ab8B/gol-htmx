@@ -40,7 +40,7 @@ class Grid:
     rows: int
     columns: int
     init_cell_grid: InitVar[CellGrid | None] = None
-    cell_grid: CellGrid = field(init=False)
+    cell_grid: CellGrid = field(init=False, repr=False)
 
     def __post_init__(self, init_cell_grid: CellGrid | None) -> None:
         self.cell_grid = self._empty_cell_grid() if init_cell_grid is None else init_cell_grid
@@ -65,7 +65,7 @@ class Grid:
         """Generate a grid with specified dimensions and initial alive cells."""
         cell_grid = []
         for row in range(rows):
-            alive_columns = alive_cells.get(str(row))
+            alive_columns = alive_cells.get(row)
             cell_grid.append([Cell(col in alive_columns) if alive_columns else Cell() for col in range(columns)])
 
         return Grid(rows=rows, columns=columns, init_cell_grid=cell_grid)
