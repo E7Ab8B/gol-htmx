@@ -52,19 +52,12 @@
 {% partialdef grid %}
   <div id="grid-container" class="grid grid-cols-[repeat({{ grid.rows }},1fr)] border">
     {% for row, col, cell in grid  %}
-      {% partial cell %}
+      <div
+        class="border h-[15px] w-[15px] {% if cell %}bg-black{% endif %}"
+        data-row="{{ row }}"
+        data-col="{{ col }}"
+        _="on click toggle .bg-black"
+      ></div>
     {% endfor %}
   </div>
-{% endpartialdef %}
-
-{% partialdef cell %}
-  <div
-    class="border h-[15px] w-[15px] {% if cell %}bg-black{% endif %}"
-    {% if updatable_cells %}
-      hx-post="{% url "cell-update" %}"
-      hx-swap="outerHTML"
-      hx-target="this"
-      hx-vals='{"row": {{ row }}, "col": {{ col }}{% if cell %}, "is_alive": "true"{% endif %}}'
-    {% endif %}
-  ></div>
 {% endpartialdef %}
