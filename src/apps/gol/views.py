@@ -14,10 +14,8 @@ from .game import Game, Grid
 if TYPE_CHECKING:
     from django.http import HttpRequest, HttpResponse
 
-
-def generate_grid(request: HttpRequest) -> Grid:
-    """Generate a grid based on session data or initialize an empty grid."""
-    return Grid.generate_grid(rows=50, columns=50, alive_cells=request.session.setdefault("alive_cells", {}))
+ROWS = 40
+COLUMNS = 40
 
 
 class GameView(TemplateView):
@@ -27,7 +25,7 @@ class GameView(TemplateView):
 
     def get(self, request, *args, **kwargs) -> HttpResponse:
         context = self.get_context_data(**kwargs)
-        context["grid"] = generate_grid(request)
+        context["grid"] = Grid(rows=ROWS, columns=COLUMNS)
         context["updatable_cells"] = True
         return self.render_to_response(context)
 
@@ -37,6 +35,11 @@ game_view = GameView.as_view()
 
 class StartGameView(TemplateView):
     template_name = "game.html#playing_control_panel"
+
+    def get(self, request, *args, **kwargs) -> HttpResponse:
+        context = self.get_context_data(**kwargs)
+        context["alive_cells_as_params"] = request.META["QUERY_STRING"]
+        return self.render_to_response(context)
 
 
 start_game_view = StartGameView.as_view()
@@ -51,7 +54,9 @@ class UpdateView(View):
     @staticmethod
     def stream(request: HttpRequest) -> Iterable:
         """Generate a continuous stream of game grid updates."""
-        game = Game(generate_grid(request))
+        # TODO: Validation
+        alive_cells = {int(row): [int(col) for col in cols] for row, cols in request.GET.lists()}
+        game = Game(Grid.generate_grid(rows=40, columns=40, alive_cells=alive_cells))
         while not game.has_ended:
             time.sleep(0.5)
             rendered_grid = render_to_string("game.html#grid", {"grid": game.grid}, request)
