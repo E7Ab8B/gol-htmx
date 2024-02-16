@@ -34,10 +34,13 @@ game_view = GameView.as_view()
 
 
 class StartGameView(TemplateView):
+    """View for starting the game and rendering the control panel template."""
+
     template_name = "game.html#playing_control_panel"
 
     def get(self, request, *args, **kwargs) -> HttpResponse:
         context = self.get_context_data(**kwargs)
+        # Passes the params containing the alive cells to create a link for UpdateView SSE connection
         context["alive_cells_as_params"] = request.META["QUERY_STRING"]
         return self.render_to_response(context)
 
