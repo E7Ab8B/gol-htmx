@@ -24,29 +24,66 @@
     <div class="h-screen mx-auto flex justify-center items-center">
       {% partial grid %}
     </div>
+
+    <script>
+      document.body.addEventListener('htmx:configRequest', function(evt) {
+        if (evt.target.id === "start-button") {
+          evt.detail.parameters = countAliveCells();
+        }
+      });
+
+      function countAliveCells() {
+        const aliveCells = {};
+
+        findAliveCells().forEach((cellElement) => {
+          let row = cellElement.dataset["row"];
+          let col = cellElement.dataset["col"];
+
+          if (!aliveCells[row]) {
+            aliveCells[row] = [];
+          }
+
+          aliveCells[row].push(col);
+        });
+
+        return aliveCells;
+      }
+
+      function findAliveCells() {
+        const gridContainer = htmx.find("#grid-container");
+        return htmx.findAll(gridContainer, ".bg-black");
+      }
+
+      function stopSse() {
+        const sseListener = htmx.find("#sse-listener");
+        htmx.remove(sseListener);
+      }
+    </script>
   </body>
 </html>
 
-{% partialdef playing_control_panel %}
+{% partialdef fresh_control_panel %}
   <div id="control-panel">
-    <button disabled>Start</button>
-    <button>Stop</button>
+    <button id="start-button" hx-get="{% url 'start-game' %}" hx-target="#control-panel" hx-trigger="click once">
+      Start
+    </button>
 
-    <div id="sse-listener" hx-ext="sse" sse-connect="{% url "update" %}">
-      <div hx-ext="sse" sse-swap="update" hx-target="#grid-container" hx-swap="outerHTML"></div>
-      <div hx-ext="sse" sse-swap="end" hx-target="#control-panel" hx-swap="outerHTML"></div>
-    </div>
+    <a id="clear-button" href="{% url 'game' %}" hx-boost="true">Clear</a>
+
+    <div id="sse-listener"></div>
   </div>
 {% endpartialdef %}
 
-{% partialdef fresh_control_panel %}
+{% partialdef playing_control_panel %}
   <div id="control-panel">
-    <button hx-get="{% url 'start-game' %}" hx-target="#control-panel" hx-trigger="click once">
-      Start
-    </button>
-    <button>Restart/Clear?</button>
+    <button id="stop-button" _="on click call stopSse() then add @disabled">Stop</button>
 
-    <div id="sse-listener"></div>
+    <a id="clear-button" href="{% url 'game' %}" hx-boost="true">Clear</a>
+
+    <div id="sse-listener" hx-ext="sse" sse-connect="{% url "update" %}?{{ alive_cells_as_params }}">
+      <div hx-ext="sse" sse-swap="update" hx-target="#grid-container" hx-swap="outerHTML"></div>
+      <div hx-ext="sse" sse-swap="end" hx-target="#control-panel" hx-swap="outerHTML"></div>
+    </div>
   </div>
 {% endpartialdef %}
 
@@ -57,7 +94,7 @@
         class="border h-[15px] w-[15px] {% if cell %}bg-black{% endif %}"
         data-row="{{ row }}"
         data-col="{{ col }}"
-        _="on click toggle .bg-black"
+        {% if updatable_cells %}_="on click toggle .bg-black"{% endif %}
       ></div>
     {% endfor %}
   </div>
