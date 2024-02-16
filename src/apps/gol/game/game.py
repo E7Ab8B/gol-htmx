@@ -30,7 +30,7 @@ class Game:
     """
 
     grid: Grid
-    rules: tuple[Rule, ...] = game_rules
+    rules: tuple[Rule, ...] = field(default=game_rules, repr=False)
     _previous_grid: Grid | None = field(init=False)
 
     def __post_init__(self) -> None:
