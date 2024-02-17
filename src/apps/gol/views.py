@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 from django.http import StreamingHttpResponse
 from django.template.loader import render_to_string
+from django.urls import reverse
 from django.views import View
 from django.views.generic import TemplateView
 
@@ -41,7 +42,7 @@ class StartGameView(TemplateView):
     def get(self, request, *args, **kwargs) -> HttpResponse:
         context = self.get_context_data(**kwargs)
         # Passes the params containing the alive cells to create a link for UpdateView SSE connection
-        context["alive_cells_as_params"] = request.META["QUERY_STRING"]
+        context["update_url"] = reverse("update") + f"?{request.META['QUERY_STRING']}"
         return self.render_to_response(context)
 
 
