@@ -80,7 +80,7 @@
 
     <a id="clear-button" href="{% url 'game' %}" hx-boost="true">Clear</a>
 
-    <div id="sse-listener" hx-ext="sse" sse-connect="{% url "update" %}?{{ alive_cells_as_params }}">
+    <div id="sse-listener" hx-ext="sse" sse-connect="{{ update_url }}">
       <div hx-ext="sse" sse-swap="update" hx-target="#grid-container" hx-swap="outerHTML"></div>
       <div hx-ext="sse" sse-swap="end" hx-target="#control-panel" hx-swap="outerHTML"></div>
     </div>
