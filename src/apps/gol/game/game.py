@@ -32,9 +32,11 @@ class Game:
     grid: Grid
     rules: tuple[Rule, ...] = field(default=game_rules, repr=False)
     _previous_grid: Grid | None = field(init=False)
+    _generation: int = field(init=False)
 
     def __post_init__(self) -> None:
         self._previous_grid = None
+        self._generation = 0
 
     @property
     def has_ended(self) -> bool:
@@ -43,6 +45,11 @@ class Game:
         Compares if the current grid is the same as the previous grid.
         """
         return self.grid == self._previous_grid
+
+    @property
+    def generation(self) -> int:
+        """The current generation of the game."""
+        return self._generation
 
     def update(self) -> None:
         """Advances the game state by applying rules to each cell.
@@ -61,6 +68,7 @@ class Game:
 
         self._previous_grid = self.grid
         self.grid = new_grid
+        self._generation += 1
 
     def _apply_rules_to_cell(self, cell: Cell, alive_neighbors: int) -> bool:
         """Applies the defined rules to a single cell."""
