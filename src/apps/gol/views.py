@@ -37,7 +37,7 @@ game_view = GameView.as_view()
 class StartGameView(TemplateView):
     """View for starting the game and rendering the control panel template."""
 
-    template_name = "game.html#playing_control_panel"
+    template_name = "game.html#sse_listener"
 
     def get(self, request, *args, **kwargs) -> HttpResponse:
         context = self.get_context_data(**kwargs)
@@ -61,14 +61,17 @@ class UpdateView(View):
         # TODO: Validation
         alive_cells = {int(row): [int(col) for col in cols] for row, cols in request.GET.lists()}
         game = Game(Grid.generate_grid(rows=40, columns=40, alive_cells=alive_cells))
-        while not game.has_ended:
+        while True:
             time.sleep(0.5)
-            rendered_grid = render_to_string("game.html#grid", {"grid": game.grid}, request)
+            rendered_grid = render_to_string("game.html#game", {"grid": game.grid, "game": game}, request)
             yield "event: update\n"
             yield f"data: {rendered_grid.replace('\n', '')}"
             yield "\n\n"
+            if game.has_ended:
+                break
             game.update()
-        rendered_grid = render_to_string("game.html#fresh_control_panel", {"grid": game.grid}, request)
+
+        rendered_grid = render_to_string("game.html#empty_sse_listener", {"grid": game.grid}, request)
         yield "event: end\n"
         yield f"data: {rendered_grid.replace('\n', '')}"
         yield "\n\n"
