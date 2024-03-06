@@ -29,6 +29,7 @@ class GameView(TemplateView):
         context = self.get_context_data(**kwargs)
         context["grid"] = Grid(rows=ROWS, columns=COLUMNS)
         context["updatable_cells"] = True
+        context["game"] = None
         return self.render_to_response(context)
 
 
