@@ -151,7 +151,7 @@
       </div>
 
       <div class="text-gray-500">
-        Generation: <span class="font-bold">{{ game.generation|default:0 }}</span>
+        Generation: <span class="font-bold">{% if game %}{{ game.generation }}{% else %}0{% endif %}</span>
       </div>
     </div>
   </div>
