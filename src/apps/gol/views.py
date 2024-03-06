@@ -17,6 +17,7 @@ if TYPE_CHECKING:
 
 ROWS = 40
 COLUMNS = 40
+UPDATE_INTERVAL = 0.3
 
 
 class GameView(TemplateView):
@@ -62,7 +63,7 @@ class UpdateView(View):
         alive_cells = {int(row): [int(col) for col in cols] for row, cols in request.GET.lists()}
         game = Game(Grid.generate_grid(rows=40, columns=40, alive_cells=alive_cells))
         while True:
-            time.sleep(0.5)
+            time.sleep(UPDATE_INTERVAL)
             rendered_grid = render_to_string("game.html#game", {"grid": game.grid, "game": game}, request)
             yield "event: update\n"
             yield f"data: {rendered_grid.replace('\n', '')}"
