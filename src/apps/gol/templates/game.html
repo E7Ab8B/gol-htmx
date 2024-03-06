@@ -18,13 +18,58 @@
     <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
   </head>
 
-  <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-    {% partial fresh_control_panel %}
+  <body class="font-mono" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+    <div
+      class="py-5 gap-4 flex flex-col-reverse mx-auto xl:gap-12 xl:px-6 xl:grid xl:grid-cols-2 2xl:container"
+    >
+      <div class="flex flex-col space-y-6 text-center md:text-left h-full">
+        <div class="text-center">
+          <h1 class="text-3xl font-bold text-4xl tracking-tight">
+            Conway's Game of Life
+          </h1>
 
-    <div class="h-screen mx-auto flex justify-center items-center">
-      {% partial grid %}
+          <p class="text-sm text-gray-700 tracking-tight">
+            A fascinating cellular automaton where you can watch patterns
+            evolve.
+          </p>
+        </div>
+
+        <p class="text-lg font-medium tracking-tighter text-center">
+          Conway's Game of Life is a cellular automaton devised by the British
+          mathematician John Horton Conway in 1970. It is a zero-player game,
+          meaning that its evolution is determined by its initial state,
+          requiring no further input.
+        </p>
+
+        <div class="">
+          <h2 class="text-xl font-bold text-center mb-2">Rules</h2>
+
+          <ol
+            class="list-decimal list-inside text-sm text-gray-500 border border-dashed border-black mx-auto p-2"
+          >
+            <li>
+              Any live cell with fewer than two live neighbors dies, as if by
+              underpopulation.
+            </li>
+            <li>
+              Any live cell with two or three live neighbors lives on to the
+              next generation.
+            </li>
+            <li>
+              Any live cell with more than three live neighbors dies, as if by
+              overpopulation.
+            </li>
+            <li>
+              Any dead cell with exactly three live neighbors becomes a live
+              cell, as if by reproduction.
+            </li>
+          </ol>
+        </div>
+      </div>
+
+      {% partial game %}
+      {% partial empty_sse_listener %}
     </div>
-
     <script>
       document.body.addEventListener('htmx:configRequest', function(evt) {
         if (evt.target.id === "start-button") {
@@ -62,40 +107,113 @@
   </body>
 </html>
 
-{% partialdef fresh_control_panel %}
-  <div id="control-panel">
-    <button id="start-button" hx-get="{% url 'start-game' %}" hx-target="#control-panel" hx-trigger="click once">
-      Start
-    </button>
-
-    <a id="clear-button" href="{% url 'game' %}" hx-boost="true">Clear</a>
-
-    <div id="sse-listener"></div>
-  </div>
-{% endpartialdef %}
-
-{% partialdef playing_control_panel %}
-  <div id="control-panel">
-    <button id="stop-button" _="on click call stopSse() then add @disabled">Stop</button>
-
-    <a id="clear-button" href="{% url 'game' %}" hx-boost="true">Clear</a>
-
-    <div id="sse-listener" hx-ext="sse" sse-connect="{{ update_url }}">
-      <div hx-ext="sse" sse-swap="update" hx-target="#grid-container" hx-swap="outerHTML"></div>
-      <div hx-ext="sse" sse-swap="end" hx-target="#control-panel" hx-swap="outerHTML"></div>
-    </div>
+{% partialdef game %}
+  <div id="game" class="flex flex-col gap-4 items-center w-fit mx-auto">
+    {% partial grid %}
+    {% partial control_panel %}
   </div>
 {% endpartialdef %}
 
 {% partialdef grid %}
-  <div id="grid-container" class="grid grid-cols-[repeat({{ grid.rows }},1fr)] border">
+  <div id="grid" class="flex flex-col gap-4">
+    {% partial grid_info %}
+    {% partial grid_container %}
+  </div>
+{% endpartialdef %}
+
+{% partialdef grid_container %}
+  <div id="grid-container" class="grid grid-cols-[repeat({{ grid.rows }},1fr)] border border-gray-800">
     {% for row, col, cell in grid  %}
       <div
-        class="border h-[15px] w-[15px] {% if cell %}bg-black{% endif %}"
+        class="border h-[12px] w-[12px] xl:h-[15px] xl:w-[15px] {% if cell %}bg-black{% endif %}"
         data-row="{{ row }}"
         data-col="{{ col }}"
         {% if updatable_cells %}_="on click toggle .bg-black"{% endif %}
       ></div>
     {% endfor %}
+  </div>
+{% endpartialdef %}
+
+{% partialdef grid_info %}
+  <div id="grid-info" class="flex flex-col gap-4">
+    <div class="flex justify-evenly">
+      <div class="text-gray-500">
+        Game Status:
+        <span class="font-bold">
+          {% if not game %}
+            Not started
+          {% elif game.has_ended %}
+            Ended
+          {% else %}
+            Running
+          {% endif %}
+        </span>
+      </div>
+
+      <div class="text-gray-500">
+        Generation: <span class="font-bold">{{ game.generation|default:0 }}</span>
+      </div>
+    </div>
+  </div>
+{% endpartialdef %}
+
+{% partialdef control_panel %}
+  <div id="control-panel" class="flex justify-between w-full items-center">
+    <div class="flex gap-2">
+      <button
+        class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 bg-gray-900 text-gray-50 px-6 py-3 rounded-lg shadow-lg hover:bg-gray-800 hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-900"
+        id="start-button"
+        hx-get="{% url 'start-game' %}"
+        hx-target="#sse-listener"
+        hx-trigger="click once"
+        _="on click add @disabled"
+        {% if game %}disabled{% endif %}
+      >
+        Start
+      </button>
+
+      <button
+        class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 bg-gray-900 text-gray-50 px-6 py-3 rounded-lg shadow-lg hover:bg-gray-800 hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-900"
+        _="on click call stopSse() then add @disabled"
+        {% if game.has_ended %}disabled{% endif %}
+      >
+        Stop
+      </button>
+
+      <a
+        id="clear-button"
+        href="{% url 'game' %}"
+        class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 bg-gray-900 text-gray-50 px-6 py-3 rounded-lg shadow-lg hover:bg-gray-800 hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-900"
+        hx-boost="true"
+      >
+        Clear
+      </a>
+    </div>
+
+    <div class="flex gap-4 text-sm text-center text-gray-500">
+      <div class="flex flex-col items-center">
+        <div class="h-[15px] w-[15px] bg-black rounded-sm"></div>
+        <span>Alive</span>
+      </div>
+
+      <div class="flex flex-col items-center">
+        <div
+          class="h-[15px] w-[15px] rounded-sm border border-black"
+        ></div>
+        <span>Dead</span>
+      </div>
+    </div>
+  </div>
+{% endpartialdef %}
+
+{% partialdef sse_listener %}
+  <div id="sse-listener" hx-ext="sse" sse-connect="{{ update_url }}">
+    <div hx-ext="sse" sse-swap="update" hx-target="#game" hx-swap="outerHTML"></div>
+    <div hx-ext="sse" sse-swap="end" hx-target="#sse-listener" hx-swap="outerHTML"></div>
+  </div>
+{% endpartialdef %}
+
+{% partialdef empty_sse_listener %}
+  <div id="sse-listener">
   </div>
 {% endpartialdef %}
